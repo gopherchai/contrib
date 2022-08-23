@@ -289,10 +289,13 @@ func (s *Server) Run() chan error {
 			}
 		}()
 	} else {
-		err := s.svr.ListenAndServe()
-		if err != nil {
-			errChan <- err
-		}
+		go func() {
+			err := s.svr.ListenAndServe()
+			if err != nil {
+				errChan <- err
+			}
+		}()
+
 	}
 	go func() {
 		err := s.interSvr.ListenAndServe()
