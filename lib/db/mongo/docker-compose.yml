@@ -1,0 +1,25 @@
+# Use root/example as user/password credentials
+version: "3.1"
+#https://hub.docker.com/_/mongo
+services:
+  mongo:
+    image: mongo:4.4
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+    ports:
+      - 27017:27017
+  mongo-express:
+    image: mongo-express:0.49
+    restart: always
+    ports:
+      - 8089:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: ihavealongpassword
