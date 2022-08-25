@@ -25,7 +25,7 @@ export CUR_PWD=$(pwd)
 export currentDir=$(cd $(dirname $0) && pwd)
 export gitStatus=$(git status -s | wc -l | head -1)
 export gitCommit=$(git log --pretty=oneline -n -1 | head -1 | awk '{print $1}')
-LD_FLAGS="-X robot/version.gitCommit=$gitCommit -X robot/version.gitStatus=$gitStatus  -X robot/version.version=$TAG -X robot/version.date=$DATE -X robot/version.author=$AUTHOR -w -s"
+LD_FLAGS="-X github.com/gopherchai/contrib/lib/version.gitCommit=$gitCommit -X github.com/gopherchai/contrib/lib/version.gitStatus=$gitStatus  -X github.com/gopherchai/contrib/lib/version.version=$TAG -X github.com/gopherchai/contrib/lib/version.date=$DATE -X github.com/gopherchai/contrib/lib/version.author=$AUTHOR -w -s"
 echo $LD_FLAGS
 go build -ldflags "$LD_FLAGS" -gcflags "-N" -i -o cmd
 */

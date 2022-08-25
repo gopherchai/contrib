@@ -15,7 +15,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"sync"
 	"syscall"
 	"time"
 
@@ -78,7 +77,7 @@ func initPrometheus(appName, subsystem string) {
 	Aobs = prometheus.NewHistogram(prometheus.HistogramOpts{
 		Namespace:   appName,
 		Subsystem:   subsystem,
-		Name:        "abc",
+		Name:        "aobs",
 		Help:        "",
 		ConstLabels: map[string]string{},
 	})
@@ -86,7 +85,6 @@ func initPrometheus(appName, subsystem string) {
 }
 
 var (
-	pInit             sync.Once
 	handlerCounterVec *prometheus.CounterVec
 
 	handlerObsVec *prometheus.HistogramVec
