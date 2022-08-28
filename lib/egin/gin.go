@@ -269,8 +269,8 @@ func (s *Server) RegisterApi(f func(e *gin.Engine)) {
 	f(s.api)
 }
 
-func (s *Server) Run() chan error {
-	var errChan chan error
+func (s *Server) Run() error {
+
 	fmt.Println("start run")
 	if s.cfg.ListenKeepAlive {
 		lc := net.ListenConfig{
@@ -278,19 +278,19 @@ func (s *Server) Run() chan error {
 		}
 		l, err := lc.Listen(context.TODO(), "tcp", s.svr.Addr)
 		if err != nil {
-			errChan <- err
+			return err
 		}
 		go func() {
 			err = s.svr.Serve(l)
 			if err != nil {
-				errChan <- err
+				panic(err)
 			}
 		}()
 	} else {
 		go func() {
 			err := s.svr.ListenAndServe()
 			if err != nil {
-				errChan <- err
+				panic(err)
 			}
 		}()
 
@@ -298,11 +298,11 @@ func (s *Server) Run() chan error {
 	go func() {
 		err := s.interSvr.ListenAndServe()
 		if err != nil {
-			errChan <- err
+			panic(err)
 		}
 	}()
 
-	return errChan
+	return nil
 }
 
 func pprofHandler(h http.HandlerFunc) gin.HandlerFunc {
@@ -310,12 +310,6 @@ func pprofHandler(h http.HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		handler.ServeHTTP(c.Writer, c.Request)
 	}
-}
-
-func (s *Server) Stop(ctx context.Context) {
-	fmt.Println("start to stop")
-	s.svr.Shutdown(ctx)
-	s.interSvr.Shutdown(ctx)
 }
 
 func stack(skip int) []byte {
