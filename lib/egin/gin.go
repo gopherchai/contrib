@@ -269,6 +269,13 @@ func (s *Server) RegisterApi(f func(e *gin.Engine)) {
 	f(s.api)
 }
 
+func (s *Server) Stop() error {
+	<-s.quitCh
+	s.svr.Shutdown(context.TODO())
+	s.interSvr.Shutdown(context.TODO())
+	return nil
+}
+
 func (s *Server) Run() error {
 
 	fmt.Println("start run")
@@ -283,14 +290,17 @@ func (s *Server) Run() error {
 		go func() {
 			err = s.svr.Serve(l)
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				s.quitCh <- syscall.SIGINT
+
 			}
 		}()
 	} else {
 		go func() {
 			err := s.svr.ListenAndServe()
 			if err != nil {
-				panic(err)
+				fmt.Println(err)
+				s.quitCh <- syscall.SIGINT
 			}
 		}()
 
@@ -298,7 +308,8 @@ func (s *Server) Run() error {
 	go func() {
 		err := s.interSvr.ListenAndServe()
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
+			s.quitCh <- syscall.SIGINT
 		}
 	}()
 
