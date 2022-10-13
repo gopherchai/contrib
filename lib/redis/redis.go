@@ -1,8 +1,6 @@
 package redis
 
 import (
-	"time"
-
 	"github.com/gopherchai/contrib/lib/config"
 
 	"github.com/go-redis/redis"
@@ -54,25 +52,6 @@ type Config struct {
 	ReadTimeout  config.Duration
 	WriteTimeout config.Duration
 	IdleTimeout  config.Duration
-}
-
-func (c *Client) Ping() error {
-	return c.Ping()
-}
-
-func (c *Client) getKey(key string) string {
-	key = c.Namespace + "_" + key
-	return key
-}
-
-//TODO 封装redis的操作
-func (c *Client) Set(key string, value interface{}, expiration time.Duration) *redis.StatusCmd {
-	key = c.getKey(key)
-	return c.Client.Set(key, value, expiration)
-}
-
-func (c *Client) Get(key string) *redis.StringCmd {
-	return c.Client.Get(c.getKey(key))
 }
 
 // type Client struct {
