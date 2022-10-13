@@ -54,8 +54,8 @@ var (
 	ErrNotParentConsumer = errors.New("not has parent consumer")
 )
 
-//NewConsumerAllPartitions's offset can be set as sarama.OffsetNewest,saramaOffsetOldest. dynamiclly add new partion is not supported
-func NewConsumerAllPartitions(brokers []string, topic string, offset int64) (*TopicConsumer, error) {
+//NewConsumerAllPartitions's offset can be set as sarama.OffsetNewest,sarama.OffsetOldest. dynamiclly add new partion is not supported.differet partitons have different offset. So this method only support  sarama.OffsetNewest and sarama.OffsetOldest
+func NewTopicConsumer(brokers []string, topic string, isLatestOffset bool) (*TopicConsumer, error) {
 	cfg := sarama.NewConfig()
 
 	cfg.Consumer.Offsets.AutoCommit.Enable = true
@@ -78,6 +78,10 @@ func NewConsumerAllPartitions(brokers []string, topic string, offset int64) (*To
 		return nil, err
 	}
 	pcs := make(map[int32]sarama.PartitionConsumer)
+	var offset = sarama.OffsetNewest
+	if !isLatestOffset {
+		offset = sarama.OffsetOldest
+	}
 	for _, p := range partitions {
 
 		pc, err := c.ConsumePartition(topic, p, offset)
