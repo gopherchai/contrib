@@ -2,7 +2,8 @@ package errors
 
 type CodeExt struct {
 	Codes
-	Msg string //用于同一个错误码展示不同的错误信息
+	Msg    string //用于同一个错误码展示不同的错误信息
+	RawErr string
 }
 
 func (cet CodeExt) Message() string {
@@ -15,4 +16,13 @@ func NewErrorWithMessage(code Codes, msg string) error {
 		Codes: code,
 		Msg:   msg,
 	}
+}
+
+func NewErrorWithRawErr(code Codes, msg string, rawErr error) error {
+	return CodeExt{
+		Codes:  code,
+		Msg:    msg,
+		RawErr: rawErr.Error(),
+	}
+
 }
