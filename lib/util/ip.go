@@ -37,10 +37,13 @@ func GetMacOrLinuxLocalIP() string {
 	switch runtime.GOOS {
 	case "linux":
 		itf, err = net.InterfaceByName("eth0")
-
+		if err != nil {
+			itf, err = net.InterfaceByName("enp12s0")
+		}
 	case "darwin":
 		itf, err = net.InterfaceByName("en0")
 	}
+
 	if err != nil {
 		panic(err)
 	}

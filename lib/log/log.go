@@ -159,14 +159,14 @@ func NewLogger(c LogConfig) (*zap.Logger, error) {
 
 		core := zapcore.NewCore(enc, zapcore.AddSync(os.Stdout),
 			logLevel)
-		l := zap.New(core, zap.AddCaller(), zap.ErrorOutput(zapcore.AddSync(os.Stdout)), zap.AddCallerSkip(2))
+		l := zap.New(core, zap.AddCaller(), zap.ErrorOutput(zapcore.AddSync(os.Stdout)), zap.AddCallerSkip(3))
 		return l, nil
 	}
 
 	// //zap.AddCallerSkip(1),zap.AddStacktrace(zapcore.DebugLevel)
 	return cfg.Build(zap.WrapCore(func(core zapcore.Core) zapcore.Core {
 		return zapcore.NewCore(zapcore.NewJSONEncoder(cfg.EncoderConfig), getWarnriter(fileName), zapcore.DebugLevel)
-	}), zap.AddCallerSkip(2))
+	}), zap.AddCallerSkip(3))
 
 }
 
