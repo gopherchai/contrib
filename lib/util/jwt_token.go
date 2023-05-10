@@ -31,6 +31,26 @@ func DecodeToken(sk string, token string) (string, error) {
 	if !ok {
 		return "", fmt.Errorf("invalid token:%s not StandardClaims", token)
 	}
+
 	return sc.Subject, nil
+
+}
+
+func DecodeTokenWithExpire(sk string, token string) (string, int64, error) {
+	var sc jwt.StandardClaims
+	t, err := jwt.ParseWithClaims(token, &sc, func(*jwt.Token) (interface {
+	}, error) {
+		return []byte(sk), nil
+	})
+	if err != nil {
+		return "", 0, fmt.Errorf("invalid token:%s error:%+v", token, err)
+	}
+	//t.Claims.Valid()
+	v, ok := t.Claims.(*jwt.StandardClaims)
+	if !ok {
+		return "", 0, fmt.Errorf("invalid token:%s not StandardClaims", token)
+	}
+
+	return sc.Subject, v.ExpiresAt, nil
 
 }
