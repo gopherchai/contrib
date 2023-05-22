@@ -33,6 +33,7 @@ type LogConfig struct {
 	Stdout             bool
 	Level              int
 	JsonFormat         bool
+	CallerSkip         int
 }
 
 func GetDefaultLogger() *Logger {
@@ -159,18 +160,18 @@ func NewLogger(c LogConfig) (*zap.Logger, error) {
 
 		core := zapcore.NewCore(enc, zapcore.AddSync(os.Stdout),
 			logLevel)
-		l := zap.New(core, zap.AddCaller(), zap.ErrorOutput(zapcore.AddSync(os.Stdout)), zap.AddCallerSkip(3))
+		l := zap.New(core, zap.AddCaller(), zap.ErrorOutput(zapcore.AddSync(os.Stdout)), zap.AddCallerSkip(c.CallerSkip))
 		return l, nil
 	}
 
 	// //zap.AddCallerSkip(1),zap.AddStacktrace(zapcore.DebugLevel)
 	return cfg.Build(zap.WrapCore(func(core zapcore.Core) zapcore.Core {
 		return zapcore.NewCore(zapcore.NewJSONEncoder(cfg.EncoderConfig), getWarnriter(fileName), zapcore.DebugLevel)
-	}), zap.AddCallerSkip(3))
+	}), zap.AddCallerSkip(c.CallerSkip))
 
 }
 
-//日志切割
+// 日志切割
 func getWarnriter(fileName string) zapcore.WriteSyncer {
 	Fatal, err := rotatelogs.New(
 		strings.Replace(fileName, ".log", "", -1)+"_%Y%m%d.log",
